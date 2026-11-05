@@ -10,12 +10,13 @@
     --me:#38e0d0; --op:#ff8a3d; --good:#6ee07a; --bad:#ff5d5d; --warn:#ffd166;
   }
   * { box-sizing:border-box; }
-  html,body { margin:0; height:100%; background:var(--bg); color:var(--txt);
+  html,body { margin:0; min-height:100%; background:var(--bg); color:var(--txt);
     font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
   body { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:16px; }
   .screen { display:none; width:100%; max-width:960px; }
   .screen.on { display:block; }
   h1 { font-size:clamp(40px,8vw,72px); margin:0; letter-spacing:.04em; line-height:1; }
+  h1.small { font-size:clamp(28px,5vw,40px); margin-bottom:16px; }
   h1 span:first-child { color:var(--me); } h1 span:last-child { color:var(--op); }
   .tag { color:var(--mut); margin:8px 0 28px; }
   .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px; }
@@ -24,12 +25,16 @@
   @media (max-width:760px){ .grid{ grid-template-columns:1fr; } }
   input[type=text] { background:#0f121b; color:var(--txt); border:1px solid var(--line); border-radius:10px;
     padding:12px 14px; font-size:16px; min-width:0; flex:1; }
-  input[type=text]:focus { outline:2px solid var(--me); border-color:transparent; }
+  input[type=text]:focus, select:focus { outline:2px solid var(--me); border-color:transparent; }
+  select { background:#0f121b; color:var(--txt); border:1px solid var(--line); border-radius:10px; padding:9px 12px; font-size:15px; min-width:120px; }
+  select:disabled, input[type=range]:disabled { opacity:.55; }
+  input[type=range] { accent-color:var(--me); width:150px; }
   button { background:#232a3b; color:var(--txt); border:1px solid var(--line); border-radius:10px;
     padding:12px 18px; font-size:16px; cursor:pointer; font-weight:600; }
-  button:hover { background:#2d3650; }
+  button:hover:not(:disabled) { background:#2d3650; }
+  button:disabled { opacity:.45; cursor:not-allowed; }
   button.primary { background:var(--me); color:#06201d; border-color:transparent; }
-  button.primary:hover { background:#6cf0e2; }
+  button.primary:hover:not(:disabled) { background:#6cf0e2; }
   label.l { display:block; color:var(--mut); font-size:13px; margin:0 0 6px; text-transform:uppercase; letter-spacing:.08em; }
   .help h3 { margin:0 0 10px; font-size:16px; }
   .help ul { margin:0; padding-left:18px; color:#c6cce0; font-size:14.5px; }
@@ -37,22 +42,47 @@
   kbd { background:#0f121b; border:1px solid var(--line); border-bottom-width:2px; border-radius:6px; padding:1px 7px;
     font:600 13px ui-monospace,Menlo,Consolas,monospace; color:var(--txt); }
   .err { color:var(--bad); min-height:22px; margin-top:10px; font-size:14px; }
-  .code { font:700 56px ui-monospace,Menlo,Consolas,monospace; letter-spacing:.2em; color:var(--warn); }
+  .code { font:700 56px ui-monospace,Menlo,Consolas,monospace; letter-spacing:.2em; color:var(--warn); line-height:1.1; }
+  .code.sm { font-size:38px; }
   #wait { text-align:center; }
 
+  /* salon */
+  #plist { list-style:none; margin:0 0 14px; padding:0; display:flex; flex-direction:column; gap:8px; }
+  .pl-row { display:flex; align-items:center; gap:10px; background:#0f121b; border:1px solid var(--line); border-radius:10px; padding:9px 12px; min-height:46px; }
+  .pl-row.empty { border-style:dashed; color:var(--mut); }
+  .dot { width:14px; height:14px; border-radius:50%; flex:none; }
+  .nm { flex:1; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .tagb { font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; padding:2px 8px; border-radius:20px; background:#232a3b; color:var(--mut); }
+  .tagb.host { background:var(--warn); color:#2b2200; font-weight:700; }
+  .tagb.bot { background:#2a3550; color:#9db4ff; }
+  .tagb.me { background:#12352f; color:var(--me); }
+  .pl-row button.x { padding:2px 9px; font-size:14px; background:transparent; border-color:transparent; color:var(--mut); }
+  .pl-row button.x:hover { color:var(--bad); background:#2a1b1f !important; }
+  .set { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid var(--line); }
+  .set:last-of-type { border-bottom:none; }
+  .set > span { color:#c6cce0; }
+  .set .val { display:flex; align-items:center; gap:10px; }
+  .set b { min-width:22px; text-align:right; font-variant-numeric:tabular-nums; }
+  .note { color:var(--mut); font-size:13px; margin:10px 0 0; }
+
   /* jeu */
-  #game .top { display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:center; margin-bottom:8px; }
+  #game .top { display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:start; margin-bottom:8px; }
   .who { display:flex; flex-direction:column; gap:4px; }
   .who.right { align-items:flex-end; }
   .who b { font-size:15px; }
-  .slots { display:flex; gap:5px; }
-  .slot { width:30px; height:30px; border-radius:8px; border:1px dashed var(--line); display:flex; align-items:center; justify-content:center;
-    font-size:15px; color:var(--mut); }
-  .slot.f { border-style:solid; color:#101010; font-weight:800; }
+  .slots { display:flex; gap:4px; flex-wrap:wrap; max-width:260px; }
+  .slot { width:26px; height:26px; border-radius:7px; border:1px dashed var(--line); display:flex; align-items:center; justify-content:center;
+    font-size:14px; color:var(--mut); }
+  .slot.f { border-style:solid; }
   .timer { font:700 30px ui-monospace,Menlo,Consolas,monospace; text-align:center; min-width:96px; }
   .timer.low { color:var(--bad); }
+  #score { display:flex; flex-direction:column; gap:3px; align-items:flex-end; }
+  .chip { display:flex; align-items:center; gap:7px; font-size:13.5px; }
+  .chip i { width:10px; height:10px; border-radius:50%; display:inline-block; }
+  .chip.gone { opacity:.4; text-decoration:line-through; }
+  .chip b { font-variant-numeric:tabular-nums; }
   .stage { position:relative; display:flex; gap:10px; align-items:flex-start; }
-  #cv { width:100%; aspect-ratio:624/432; background:#05070b; border-radius:12px; border:1px solid var(--line); display:block; image-rendering:auto; }
+  #cv { width:100%; aspect-ratio:624/432; background:#05070b; border-radius:12px; border:1px solid var(--line); display:block; }
   .side { width:116px; flex:none; display:flex; flex-direction:column; gap:10px; }
   @media (max-width:760px){ .stage{flex-direction:column;} .side{width:100%; flex-direction:row; justify-content:space-between;} }
   #mini { width:100%; max-width:116px; aspect-ratio:1; background:#0b0e15; border:1px solid var(--line); border-radius:10px; }
@@ -65,11 +95,14 @@
   .btn kbd { margin-right:6px; }
   .btn i { position:absolute; left:0; bottom:0; height:3px; background:var(--warn); width:0; }
   .btn.dis { opacity:.55; }
+  .btn.quit { flex:0 0 auto; min-width:0; color:var(--mut); }
   #overlay { position:absolute; inset:0; display:none; align-items:center; justify-content:center; flex-direction:column;
-    background:rgba(5,7,11,.78); border-radius:12px; text-align:center; padding:20px; }
+    background:rgba(5,7,11,.82); border-radius:12px; text-align:center; padding:20px; }
   #overlay.on { display:flex; }
   #overlay .big { font-size:clamp(34px,8vw,64px); font-weight:800; line-height:1.1; }
-  #overlay p { color:#c6cce0; margin:10px 0 18px; }
+  #overlay p { color:#c6cce0; margin:10px 0 14px; }
+  #overlay ol { list-style:none; padding:0; margin:0 0 18px; display:flex; flex-direction:column; gap:4px; font-size:15px; }
+  #overlay ol li { display:flex; align-items:center; justify-content:center; gap:8px; }
   .foot { color:var(--mut); font-size:12.5px; margin-top:14px; text-align:center; }
 </style>
 </head>
@@ -78,13 +111,16 @@
 <!-- MENU -->
 <section id="menu" class="screen on">
   <h1><span>DOUBLE</span> <span>JEU</span></h1>
-  <p class="tag">Deux agents rivaux. Un bâtiment piégé. Quatre objets secrets. Un seul hélicoptère.</p>
+  <p class="tag">Des agents rivaux. Un bâtiment piégé. Des objets secrets. Un seul hélicoptère.</p>
   <div class="grid">
     <div class="card">
       <label class="l" for="name">Ton nom d’agent</label>
       <div class="row" style="margin-bottom:18px"><input id="name" type="text" maxlength="14" placeholder="Agent 007" autocomplete="off"></div>
+      <div class="row" style="margin-bottom:10px">
+        <button class="primary" id="bBot" style="flex:1">Contre un bot</button>
+        <button id="bQuick" style="flex:1">Partie rapide</button>
+      </div>
       <div class="row" style="margin-bottom:14px">
-        <button class="primary" id="bQuick" style="flex:1">Partie rapide</button>
         <button id="bCreate" style="flex:1">Créer un salon</button>
       </div>
       <label class="l" for="code">Rejoindre un ami</label>
@@ -101,24 +137,61 @@
         <li><kbd>E</kbd> fouiller un meuble (il faut rester immobile).</li>
         <li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> poser une bombe, un ressort ou de la colle sur un meuble. Tu es immunisé contre tes propres pièges.</li>
         <li><kbd>R</kbd> désamorcer le meuble devant toi (3 pinces seulement).</li>
-        <li><kbd>Espace</kbd> assommer l’autre agent s’il est à portée.</li>
-        <li>Trouve les <b>4 objets</b>, puis rejoins l’hélico au centre et appuie sur <kbd>E</kbd>. Le temps écoulé, celui qui a le plus d’objets gagne.</li>
+        <li><kbd>Espace</kbd> assommer un autre agent à portée.</li>
+        <li>Trouve <b>tous les objets</b>, puis rejoins l’hélico et appuie sur <kbd>E</kbd>. Le temps écoulé, celui qui en a le plus gagne.</li>
         <li>Tu ne vois que la pièce où tu te trouves.</li>
+        <li>Dans un salon, l’hôte règle la partie (objets, carte, durée, joueurs, bots) puis lance avec « Jouer ».</li>
       </ul>
     </div>
   </div>
   <div class="foot">Double Jeu — jeu original, jouable au clavier dans le navigateur.</div>
 </section>
 
-<!-- ATTENTE -->
+<!-- RECHERCHE (partie rapide) -->
 <section id="wait" class="screen">
   <div class="card">
-    <p class="tag" style="margin-top:0" id="waitTxt">En attente d’un adversaire…</p>
-    <div class="code" id="waitCode"></div>
-    <p class="tag" id="waitHint"></p>
-    <div class="row" style="justify-content:center">
-      <button id="bCopy">Copier le lien d’invitation</button>
-      <button id="bCancel">Annuler</button>
+    <p class="tag" style="margin-top:0">Recherche d’un adversaire…</p>
+    <p class="tag">La partie démarre dès qu’un autre joueur clique sur « Partie rapide ».</p>
+    <button id="bCancel">Annuler</button>
+  </div>
+</section>
+
+<!-- SALON -->
+<section id="lobby" class="screen">
+  <h1 class="small"><span>DOUBLE</span> <span>JEU</span></h1>
+  <div class="grid">
+    <div class="card">
+      <div class="row" style="justify-content:space-between; margin-bottom:16px">
+        <div><label class="l">Code du salon</label><div class="code sm" id="lCode"></div></div>
+        <button id="bCopy">Copier le lien d’invitation</button>
+      </div>
+      <label class="l">Joueurs présents <span id="lCount"></span></label>
+      <ul id="plist"></ul>
+      <button id="bAddBot">+ Ajouter un bot</button>
+    </div>
+    <div class="card">
+      <label class="l">Paramètres de la partie <span id="lHostNote"></span></label>
+      <div class="set"><span>Objets à trouver</span><div class="val"><input type="range" id="sItems" min="1" max="10" step="1"><b id="vItems"></b></div></div>
+      <div class="set"><span>Taille de la carte</span>
+        <select id="sMap">
+          <option value="2x3">2 × 3 (petite)</option><option value="3x3">3 × 3</option><option value="3x4">3 × 4</option>
+          <option value="4x4">4 × 4</option><option value="5x5">5 × 5 (immense)</option>
+        </select></div>
+      <div class="set"><span>Durée de la partie</span>
+        <select id="sTime">
+          <option value="120">2 minutes</option><option value="180">3 minutes</option><option value="240">4 minutes</option>
+          <option value="300">5 minutes</option><option value="420">7 minutes</option><option value="600">10 minutes</option>
+        </select></div>
+      <div class="set"><span>Nombre de joueurs</span>
+        <select id="sPlayers">
+          <option value="2">2 joueurs</option><option value="3">3 joueurs</option><option value="4">4 joueurs</option><option value="5">5 joueurs</option>
+        </select></div>
+      <div class="row" style="margin-top:18px">
+        <button class="primary" id="bStart" style="flex:1">Jouer</button>
+        <button id="bLeave">Quitter le salon</button>
+      </div>
+      <p class="note" id="lWaitHost">En attente de l’hôte pour lancer la partie…</p>
+      <div class="err" id="lMsg"></div>
     </div>
   </div>
 </section>
@@ -126,9 +199,9 @@
 <!-- JEU -->
 <section id="game" class="screen">
   <div class="top">
-    <div class="who"><b id="nMe" style="color:var(--me)"></b><div class="slots" id="sMe"></div></div>
+    <div class="who"><b id="nMe"></b><div class="slots" id="sMe"></div></div>
     <div class="timer" id="timer">4:00</div>
-    <div class="who right"><b id="nOp" style="color:var(--op)"></b><div class="slots" id="sOp"></div></div>
+    <div class="who right"><div id="score"></div></div>
   </div>
   <div class="stage">
     <div style="position:relative; flex:1; min-width:0">
@@ -147,6 +220,7 @@
     <div class="btn" data-k="3"><kbd>3</kbd>🟢 Colle<i></i></div>
     <div class="btn" data-k="r"><kbd>R</kbd>Pinces ×<span id="ch">3</span></div>
     <div class="btn" data-k="atk"><kbd>␣</kbd>Assommer<i></i></div>
+    <div class="btn quit" data-k="quit">Quitter</div>
   </div>
 </section>
 
